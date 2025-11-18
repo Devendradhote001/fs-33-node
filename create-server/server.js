@@ -4,40 +4,28 @@ const UserModel = require("./models/user.model");
 
 const app = express();
 
-app.use(express.json());
-
 const connectDB = async () => {
   try {
-    let res = await mongoose.connect("mongodb://0.0.0.0/raftaar");
+    let res = await mongoose.connect("mongodb://0.0.0.0/dhvani");
     if (res) {
       console.log("mongodb connected");
     }
   } catch (error) {
-    console.log("error while connecting md");
+    console.log("mongodb error");
   }
 };
 
 connectDB();
 
-app.get("/", (req, res) => {
-  res.send("heyy i m express");
-});
+app.get("/create-user", async (req, res) => {
+  let user = await UserModel.create({
+    name: "panu mandal",
+    email: "ranu@gmail.com",
+    mobile: "9876543210",
+    password: "12345678",
+  });
 
-app.post("/create-user", async (req, res) => {
-  try {
-    let { name, email, mobile, password } = req.body;
-
-    let user = await UserModel.create({
-      name,
-      email,
-      mobile,
-      password,
-    });
-
-    return res.send(user);
-  } catch (error) {
-    return res.send(error);
-  }
+  res.send(user);
 });
 
 app.listen(3000, () => {
