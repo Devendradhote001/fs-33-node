@@ -15,10 +15,15 @@ let registerUserController = async (req, res) => {
       password,
     });
 
-    return res.send(newUser);
+    return res.status(201).json({
+      message: "User registered successfully",
+      user: newUser,
+    });
   } catch (error) {
     console.log(error);
-    res.send("error in registration", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
 
@@ -26,7 +31,10 @@ let getAllUsersController = async (req, res) => {
   try {
     let allUsers = await UserModel.find({});
 
-    return res.send(allUsers);
+    return res.status(200).json({
+      message: "Fetched all users",
+      users: allUsers,
+    });
   } catch (error) {
     console.log("error getting users", error);
   }
@@ -45,8 +53,47 @@ let deleteUserController = async (req, res) => {
   }
 };
 
+let getSingleUserController = async (req, res) => {
+  try {
+    let user_id = req.params.id;
+
+    if (!user_id) {
+      return res.send("Id not found");
+    }
+
+    let user = await UserModel.findById(user_id);
+
+    return res.send(user);
+  } catch (error) {
+    console.log("error in getting single user", error);
+  }
+};
+
+const updateUserDataController = async (req, res) => {
+  try {
+    let user_id = req.params.id;
+
+    if (!user_id) return res.send("Id not found");
+    let { name, email, password, mobile } = req.body;
+
+    if (!name || !email || !mobile || !password) {
+      return res.send("All fields are required");
+    }
+
+    let updatedUser = await UserModel.findByIdAndUpdate(user_id, req.body, {
+      new: true,
+    });
+
+    return res.send(updatedUser);
+  } catch (error) {
+    console.log("error in update api", error);
+  }
+};
+
 module.exports = {
   registerUserController,
   getAllUsersController,
   deleteUserController,
+  getSingleUserController,
+  updateUserDataController,
 };

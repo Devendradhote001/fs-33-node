@@ -2,7 +2,6 @@ const express = require("express");
 const UserModel = require("./models/user.model");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/user.routes");
-const productRoutes = require("./routes/products.routes");
 
 const app = express();
 
