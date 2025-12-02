@@ -57,7 +57,7 @@ const loginUserController = async (req, res) => {
         message: "Email and password are required",
       });
 
-      // 2. find existed user
+    // 2. find existed user
     let user = await UserModel.findOne({
       email,
     });
@@ -76,7 +76,7 @@ const loginUserController = async (req, res) => {
         message: "Invalid credentials",
       });
 
-      // 4. token generation
+    // 4. token generation
     let token = jwt.sign({ id: user._id }, process.env.jwt_secret_key, {
       expiresIn: "1h",
     });
@@ -98,7 +98,39 @@ const loginUserController = async (req, res) => {
   }
 };
 
+const logoutUserController = async (req, res) => {
+  try {
+    let { user_id } = req.body;
+
+    if (!user_id)
+      return res.status(404).json({
+        message: "User if not found",
+      });
+
+    let user = await UserModel.findById(user_id);
+
+    if (!user)
+      return res.status(401).json({
+        message: "User id not found ! Unauthorized",
+      });
+
+    res.clearCookie("token");
+
+    return res.status(200).json({
+      message: "USer logged out",
+      user: user,
+    });
+  } catch (error) {
+    console.log("error in logout", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error,
+    });
+  }
+};
+
 module.exports = {
   registerUserController,
-  loginUserController
+  loginUserController,
+  logoutUserController
 };
