@@ -50,10 +50,9 @@ export const createProductController = async (req, res) => {
       });
     }
 
-    let currentlyLogUser = await UserModel.findById(req.user._id);
-
-    currentlyLogUser.products.push(newProduct._id);
-    await currentlyLogUser.save();
+    await UserModel.findByIdAndUpdate(req.user._id, {
+      $push: { products: newProduct._id },
+    });
 
     return res.status(201).json({
       message: "Product created",
