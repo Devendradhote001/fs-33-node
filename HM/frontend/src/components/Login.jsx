@@ -1,7 +1,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { setUser } from "../features/AuthSlice";
+import { axiosInstance } from "../config/axiosInstance";
 
 const Login = ({ setToggle }) => {
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -9,13 +13,16 @@ const Login = ({ setToggle }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    // TODO: replace with your login API endpoint
-    // await fetch("/api/auth/login", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(data),
-    // });
-    console.log(data);
+    try {
+      let res = await axiosInstance.post("auth/login", data, {
+        withCredentials: true,
+      });
+      if (res) {
+        dispatch(setUser(res.data.user));
+      }
+    } catch (error) {
+      console.log("error in login api", error);
+    }
   };
 
   return (

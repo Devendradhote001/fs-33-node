@@ -12,15 +12,14 @@ const Register = ({ setToggle }) => {
 
   const onSubmit = async (data) => {
     try {
-      let res = await axiosInstance.post("users/register", data, {
+      let res = await axiosInstance.post("auth/register", data, {
         withCredentials: true,
       });
-
       if (res) {
         console.log(res);
       }
     } catch (error) {
-      console.log("error in user reg", error);
+      console.log("error in  reg api", error);
     }
   };
 
