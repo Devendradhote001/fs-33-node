@@ -1,11 +1,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { setUser } from "../features/AuthSlice";
 import { axiosInstance } from "../config/axiosInstance";
+import { setUser } from "../features/AuthSlice";
+import { useNavigate } from "react-router";
 
 const Login = ({ setToggle }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -19,6 +21,9 @@ const Login = ({ setToggle }) => {
       });
       if (res) {
         dispatch(setUser(res.data.user));
+        navigate("/home");
+
+        return;
       }
     } catch (error) {
       console.log("error in login api", error);

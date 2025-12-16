@@ -1,10 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router";
+import Nvabar from "../components/Nvabar";
 
 const HomeLayout = () => {
   return (
     <div>
-      <nav>nav bar</nav>
+      <Nvabar />
       <div>
         <Outlet />
       </div>

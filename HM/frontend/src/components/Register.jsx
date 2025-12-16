@@ -1,7 +1,5 @@
-import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { axiosInstance } from "../config/axiosInstance";
 
 const Register = ({ setToggle }) => {
   const {
@@ -10,17 +8,8 @@ const Register = ({ setToggle }) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const onSubmit = async (data) => {
-    try {
-      let res = await axiosInstance.post("auth/register", data, {
-        withCredentials: true,
-      });
-      if (res) {
-        console.log(res);
-      }
-    } catch (error) {
-      console.log("error in  reg api", error);
-    }
+  const onSubmit = (data) => {
+    console.log(data);
   };
 
   return (

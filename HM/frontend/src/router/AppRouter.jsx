@@ -5,11 +5,15 @@ import { axiosInstance } from "../config/axiosInstance";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/AuthSlice";
 import HomeLayout from "../layout/HomeLayout";
-import ProtectedRoute from "../components/ProtectedRoute";
 import PublicRoute from "../components/PublicRoute";
+import ProtectedRoute from "../components/ProtectedRoute";
+import Women from "../pages/Women";
+import Mens from "../pages/Mens";
+import Kids from "../pages/Kids";
 
 const AppRouter = () => {
   const dispatch = useDispatch();
+
   useEffect(() => {
     (async () => {
       try {
@@ -18,9 +22,10 @@ const AppRouter = () => {
         });
         if (res) {
           dispatch(setUser(res.data.user));
+          console.log(res);
         }
       } catch (error) {
-        console.log("error in current user api", error);
+        console.log("error in cu api", error);
       }
     })();
   }, []);
@@ -43,6 +48,20 @@ const AppRouter = () => {
         {
           path: "",
           element: <HomeLayout />,
+          children: [
+            {
+              path: "",
+              element: <Women />,
+            },
+            {
+              path: "mens",
+              element: <Mens />,
+            },
+            {
+              path: "kids",
+              element: <Kids />,
+            },
+          ],
         },
       ],
     },
