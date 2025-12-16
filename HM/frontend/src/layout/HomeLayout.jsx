@@ -6,7 +6,7 @@ const HomeLayout = () => {
   return (
     <div>
       <Nvabar />
-      <div>
+      <div className="p-4">
         <Outlet />
       </div>
     </div>

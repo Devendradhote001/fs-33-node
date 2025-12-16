@@ -10,6 +10,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Women from "../pages/Women";
 import Mens from "../pages/Mens";
 import Kids from "../pages/Kids";
+import CreateProduct from "../pages/CreateProduct";
 
 const AppRouter = () => {
   const dispatch = useDispatch();
@@ -60,6 +61,10 @@ const AppRouter = () => {
             {
               path: "kids",
               element: <Kids />,
+            },
+            {
+              path: "create-product",
+              element: <CreateProduct />,
             },
           ],
         },

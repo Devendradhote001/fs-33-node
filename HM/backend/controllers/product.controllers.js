@@ -3,6 +3,7 @@ import { UserModel } from "../models/user.model.js";
 
 export const createProductController = async (req, res) => {
   try {
+    console.log(req.body);
     let {
       productName,
       description,
@@ -68,7 +69,10 @@ export const createProductController = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    let allPRoducts = await ProductModel.find().populate("user_id");
+    let cat = req.query.category;
+    let allPRoducts = await ProductModel.find({
+      category: cat,
+    });
 
     return res.status(200).json({
       message: "All products fetched",
