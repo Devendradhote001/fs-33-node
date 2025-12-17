@@ -70,9 +70,17 @@ export const createProductController = async (req, res) => {
 export const getAllProducts = async (req, res) => {
   try {
     let cat = req.query.category;
-    let allPRoducts = await ProductModel.find({
-      category: cat,
-    });
+    console.log("category---->", cat);
+    let allPRoducts;
+    if (cat) {
+      allPRoducts = await ProductModel.find({
+        category: cat,
+      });
+    }
+
+    if (!cat) {
+      allPRoducts = await ProductModel.find();
+    }
 
     return res.status(200).json({
       message: "All products fetched",
