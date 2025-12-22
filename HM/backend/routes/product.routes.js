@@ -15,3 +15,4 @@ router.get("/", getAllProducts);
 router.get("/:product_id", getSingleProductDetail);
 router.put("/update/:product_id", authMiddleware, updateProductController);
 router.delete("/delete/:product_id", authMiddleware, deleteProductController);
+
