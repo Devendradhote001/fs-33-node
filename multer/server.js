@@ -1,36 +1,35 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
-const { sendFilesToIK } = require("./services/imagekit");
+const { uploadFileToIMAGEKIT } = require("./services/storage.service");
 
 const app = express();
 
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cors("*"));
-
-// let storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + file.originalname);
-//   },
-// });
 
 let storage = multer.memoryStorage();
 
 let upload = multer({ storage });
 
-app.post("/getImg", upload.single("image"), async (req, res) => {
-  let fileData = req.file;
-  console.log(fileData);
-  let iku = await sendFilesToIK(fileData.buffer, fileData.originalname);
-  console.log(iku);
-  return res.send(fileData);
+app.post("/getImg", upload.array("image", 5), async (req, res) => {
+  let fileData = req.files;
+
+  let utik = await Promise.all(
+    fileData.map(async (elem) => {
+      return await uploadFileToIMAGEKIT(elem.buffer, elem.originalname);
+    })
+  );
+
+  console.log(utik);
+  res.send(utik);
 });
 
 app.listen(3000, () => {
   console.log("server is running on port 3000");
 });
+
+// req.file ---> single object kuki tum single method kla use karte ho
+// req.files ----> tum array method ka use krre ho to tumhe [] milega
