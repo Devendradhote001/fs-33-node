@@ -32,9 +32,9 @@ const CreateProduct = () => {
       let res = await axiosInstance.post("products/create", data, {
         withCredentials: true,
       });
-      if(res){
-        alert('product created')
-        reset()
+      if (res) {
+        alert("product created");
+        reset();
       }
     } catch (error) {
       console.log("error in cp api->", error);
@@ -226,7 +226,7 @@ const CreateProduct = () => {
               Image URLs (comma separated)
             </label>
             <input
-              type="text"
+              type="file"
               className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="e.g. https://..., https://..."
               {...register("images.0", {

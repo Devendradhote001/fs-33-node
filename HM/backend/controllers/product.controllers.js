@@ -1,9 +1,9 @@
 import { ProductModel } from "../models/product.model.js";
 import { UserModel } from "../models/user.model.js";
+import { uploadToImageKit } from "../services/storage.services.js";
 
 export const createProductController = async (req, res) => {
   try {
-    console.log(req.body);
     let {
       productName,
       description,
@@ -15,6 +15,18 @@ export const createProductController = async (req, res) => {
       colors,
     } = req.body;
 
+    if (!req.files)
+      return res.status(404).json({
+        message: "Images are required",
+      });
+
+    let imageUrls = await Promise.all(
+      req.files.map(
+        async (elem) => await uploadToImageKit(elem.buffer, elem.originalname)
+      )
+    );
+
+
     if (
       !productName ||
       !description ||
@@ -22,7 +34,6 @@ export const createProductController = async (req, res) => {
       !amount ||
       !category ||
       !sizes ||
-      !images ||
       !colors
     ) {
       return res.status(401).json({
@@ -39,7 +50,7 @@ export const createProductController = async (req, res) => {
       },
       category,
       sizes,
-      images,
+      images:imageUrls.map((elem) => elem.url),
       colors,
       user_id: req.user._id,
     });
