@@ -6,8 +6,10 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>Hello</h1>
-    <h1>chacha</h1>
-    <h1>chachi</h1>
+    <h1>
+      <%data.forEach((elem) => {%>
+      <h1><%=elem%></h1>
+      <%})%>
+    </h1>
   </body>
 </html>
