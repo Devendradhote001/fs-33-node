@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/user.model.js";
+import { sendMail } from "../services/mail.service.js";
 
 export const registerController = async (req, res) => {
   try {
@@ -106,6 +107,66 @@ export const logoutController = async (req, res) => {
     return res.status(200).json({
       message: "User logged out",
     });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      error,
+    });
+  }
+};
+
+export const forgetPasswordController = async (req, res) => {
+  try {
+    let { email } = req.body;
+    console.log(email);
+
+    let existingUser = await UserModel.findOne({ email });
+
+    if (!existingUser)
+      return res.status(401).json({
+        message: "user not found! unauthorize",
+      });
+
+    let rawToken = jwt.sign(
+      { id: existingUser._id },
+      process.env.JWT_RAW_SECRET,
+      {
+        expiresIn: "10m",
+      }
+    );
+
+    let resetLink = `http://localhost:3000/api/auth/reset-password/${rawToken}`;
+
+    let send = await sendMail(
+      "ddhote780@gmail.com",
+      "Rest password",
+      resetLink
+    );
+
+    return res.status(200).json({
+      message: "Reset link sent to your registered gmail",
+    });
+  } catch (error) {
+    console.log("error while sending mail", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error,
+    });
+  }
+};
+
+export const resetPasswordController = async (req, res) => {
+  try {
+    let { token } = req.params;
+
+    if (!token)
+      return res.status(404).json({
+        message: "beta nahi mila token",
+      });
+
+    let decode = jwt.verify(token, process.env.JWT_RAW_SECRET);
+
+    return res.render("reset.ejs", { id: decode.id });
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",

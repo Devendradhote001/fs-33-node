@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import path from "path";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 import { router as authRoutes } from "./routes/auth.routes.js";
@@ -10,6 +11,11 @@ import cookieParser from "cookie-parser";
 
 connectDB();
 const app = express();
+
+app.set("view engine", "ejs");
+
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 app.use(
   cors({
@@ -19,6 +25,14 @@ app.use(
 );
 
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  return res.render("index.ejs");
+});
+
+app.get("/email-page", (req, res) => {
+  return res.render("email.ejs");
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
