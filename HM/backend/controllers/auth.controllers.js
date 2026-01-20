@@ -118,7 +118,6 @@ export const logoutController = async (req, res) => {
 export const forgetPasswordController = async (req, res) => {
   try {
     let { email } = req.body;
-    console.log(email);
 
     let existingUser = await UserModel.findOne({ email });
 
@@ -170,6 +169,44 @@ export const resetPasswordController = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",
+      error,
+    });
+  }
+};
+
+export const updatePasswordController = async (req, res) => {
+  try {
+    let { password } = req.body;
+    let id = req.params.id;
+
+    if (!password || !id) {
+      return res.status(404).json({
+        message: "Id or passwrod are required",
+      });
+    }
+
+    let hashPass = await bcrypt.hash(password, 10);
+
+    let updateUserPassword = await UserModel.findByIdAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        password: hashPass,
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.status(200).json({
+      message: "Password updated",
+      user: updateUserPassword,
+    });
+  } catch (error) {
+    console.log("error while updating password", error);
+    return res.status(500).json({
+      message: "Internal server erroe",
       error,
     });
   }
