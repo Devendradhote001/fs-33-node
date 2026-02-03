@@ -8,6 +8,8 @@ import { router as authRoutes } from "./routes/auth.routes.js";
 import { router as productRoutes } from "./routes/product.routes.js";
 
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 connectDB();
 const app = express();
@@ -15,6 +17,8 @@ const app = express();
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
+
+app.use(morgan("tiny"));
 
 app.use(cookieParser());
 app.use(
@@ -36,6 +40,8 @@ app.get("/email-page", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+
+app.use(errorMiddleware);
 
 app.listen(3000, () => {
   console.log("server is running on port 3000");

@@ -2,51 +2,40 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/user.model.js";
 import { sendMail } from "../services/mail.service.js";
+import { CustomError } from "../utils/CustomError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
-export const registerController = async (req, res) => {
-  try {
-    let { username, email, mobile, password } = req.body;
+export const registerController = asyncHandler(async (req, res) => {
+  let { username, email, mobile, password } = req.body;
 
-    if (!username || !email || !mobile || !password) {
-      return res.status(401).json({
-        message: "All fields are required",
-      });
-    }
-
-    let hashPass = await bcrypt.hash(password, 10);
-
-    let newUser = await UserModel.create({
-      username,
-      email,
-      mobile,
-      password: hashPass,
-    });
-
-    if (!newUser)
-      return res.status(401).json({
-        message: "Something went wrong",
-        error,
-      });
-
-    let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1h",
-    });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-    });
-
-    return res.status(201).json({
-      message: "User registered",
-      user: newUser,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
-      error,
-    });
+  if (!username || !email || !mobile || !password) {
+    throw new CustomError("pagalll ", 400);
   }
-};
+
+  let hashPass = await bcrypt.hash(password, 10);
+
+  let newUser = await UserModel.create({
+    username,
+    email,
+    mobile,
+    password: hashPass,
+  });
+
+  if (!newUser) throw new CustomError("user not found", 404);
+
+  let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: "1h",
+  });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+  });
+
+  return res.status(201).json({
+    message: "User registered",
+    user: newUser,
+  });
+});
 
 export const loginController = async (req, res) => {
   try {
